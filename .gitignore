@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+env/
+venv/
+.Python
+build/
+dist/
+*.log
+
+# FastAPI / Uvicorn logs
+logs/
+*.db
+
+# MongoDB (local dev)
+dump/
+*.bson
+*.json
+*.lock
+
+# Node.js / Next.js
+node_modules/
+.next/
+out/
+.env.local
+.env.development
+.env.production
+
+# Docker
+*.tar
+docker-compose.override.yml
+
+# OS / Editor Junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Reports
+/reports/output/
+/reports/*.pdf
+/reports/*.html
+
+# Env & Secrets
+.env
+.env.*
+
+# Cache
+npm-debug.log*
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Licensing
+license.lic

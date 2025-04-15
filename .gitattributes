@@ -1,0 +1,15 @@
+# Treat all files as text
+* text=auto
+
+# Handle Unix line endings properly
+*.sh text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+
+# Mark sensitive or special files as binary
+*.lic binary
+*.pdf binary
+*.png binary
+*.jpg binary
