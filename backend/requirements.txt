@@ -1,0 +1,32 @@
+# ⚙️ FastAPI Server
+fastapi==0.104.1
+uvicorn==0.23.2
+
+# 🧠 GPT + Risk Engine
+openai==1.13.3
+
+# 🔍 Recon Modules
+dnspython==2.4.2
+requests==2.31.0
+beautifulsoup4==4.12.2
+
+# 📄 Report Generation
+jinja2==3.1.2
+weasyprint==61.2
+
+# 🔐 Auth + Licensing
+python-jose==3.3.0
+python-dotenv==1.0.1
+passlib==1.7.4
+
+# 🧱 CLI & Tools
+rich==13.7.0
+
+# 🧪 Dev Support
+httpx==0.25.0
+pydantic==1.10.9
+typing-extensions==4.8.0
+
+# 🗃️ Database (if MongoDB is used)
+pymongo==4.6.0
+
