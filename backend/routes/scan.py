@@ -7,23 +7,18 @@ from recon.tech_stack import fingerprint_tech_stack
 
 router = APIRouter()
 
-
-dns_data = enum_dns(target)
-stack_data = fingerprint_tech_stack(f"https://{target}")
-
-
 @router.post("/",
-	summary="Run Scan + Generate Report",
-	    description="""
-	Submit a domain or IP to perform a full cybersecurity risk audit:
-	- Nmap + tech stack recon
-	- GPT-based risk scoring
-	- Compliance mapping
-	- PDF/HTML report generation
+    summary="Run Scan + Generate Report",
+    description="""
+    Submit a domain or IP to perform a full cybersecurity risk audit:
+    - Nmap + tech stack recon
+    - GPT-based risk scoring
+    - Compliance mapping
+    - PDF/HTML report generation
 
-	Returns summary, score, and report path.
-	""",
-	    response_description="Scan result + risk score + path to generated report"
+    Returns summary, score, and report path.
+    """,
+    response_description="Scan result + risk score + path to generated report"
 )
 async def scan_and_audit(
     payload: dict = Body(..., example={"target": "example.com", "framework": "NIST CSF"})
@@ -38,8 +33,17 @@ async def scan_and_audit(
         # Step 1: Recon
         recon_data = run_nmap_scan(target)
 
+        # Optional extra recon
+        dns_data = enum_dns(target)
+        tech_stack = fingerprint_tech_stack(f"https://{target}")
+
         # Step 2: GPT risk engine
-        ai_result = generate_risk_assessment(scan_data=recon_data, framework=framework)
+        ai_result = generate_risk_assessment(
+            scan_data=recon_data,
+            dns_data=dns_data,
+            tech_stack=tech_stack,
+            framework=framework
+        )
         ai_result["target"] = target
         ai_result["framework"] = framework
 
