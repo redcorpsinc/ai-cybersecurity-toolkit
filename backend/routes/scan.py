@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException, Body
-from backend.recon.nmap_runner import run_nmap_scan
-from backend.ai.risk_engine import generate_risk_assessment
-from backend.reports.report_generator import generate_report
-from backend.recon.dns_enum import enum_dns
-from backend.recon.tech_stack import fingerprint_tech_stack
+from recon.nmap_runner import run_nmap_scan
+from ai.risk_engine import generate_risk_assessment
+from reports.report_generator import generate_report
+from recon.dns_enum import enum_dns
+from recon.tech_stack import fingerprint_tech_stack
 
 router = APIRouter()
 
