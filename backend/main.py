@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from backend.routes import scan, report, user
+from routes import scan, report, user
 import uvicorn
 import logging
 
