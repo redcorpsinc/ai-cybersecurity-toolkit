@@ -4,29 +4,32 @@
 # --- Build Stage ---
 FROM node:23.11.0-slim AS builder
 
+# Optional: manually install specific NPM version
+RUN npm install -g npm@11.3.0
+
 WORKDIR /app
 
-# Install only dependencies first to enable caching
+# Copy and install dependencies
 COPY package.json package-lock.json ./
 RUN npm install --legacy-peer-deps
 
-# Copy rest of the code
+# Copy the rest of the app
 COPY . .
+
+# Build the frontend
 RUN npm run build
 
-# --- Production Stage ---
-FROM node:18-slim
+# --- Serve Stage ---
+FROM node:23.11.0-slim
+
+# Optional: use same NPM version here as well
+RUN npm install -g npm@11.3.0
 
 WORKDIR /app
 
-# Copy built app and install prod deps only
-COPY --from=builder /app/.next .next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/package*.json ./
+COPY --from=builder /app ./
+RUN npm install --omit=dev
 
-RUN npm install --omit=dev --legacy-peer-deps
-
-ENV NODE_ENV=production
 EXPOSE 3000
-
 CMD ["npm", "start"]
+
