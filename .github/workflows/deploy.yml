@@ -1,57 +1,84 @@
-name: Build and Deploy
+name: 🚀 Deploy Red Corps AI Sentinel
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - staging
+  workflow_dispatch:
 
 jobs:
-  build:
+  build-and-deploy:
+    name: 🔧 Build & Deploy (Docker Compose)
     runs-on: ubuntu-latest
 
-    env:
-      DOCKER_BUILDKIT: 1
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: 🧾 Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Log in to DockerHub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.10.0
 
-    - name: Build backend image
-      run: |
-        docker build -t redcorps/secure-backend:latest -f docker/backend.Dockerfile .
-        docker push redcorps/secure-backend:latest
+      - name: 📦 Set up Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.21.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
 
-    - name: Build frontend image
-      run: |
-        docker build -t redcorps/secure-frontend:latest -f docker/frontend.Dockerfile .
-        docker push redcorps/secure-frontend:latest
+      - name: 🗂️ Load Environment Variables
+        run: cp .env.template .env
 
-  deploy:
-    needs: build
+      - name: 🔧 Build Containers
+        run: docker-compose build
+
+      - name: 🚀 Run Containers
+        run: docker-compose up -d
+
+      - name: ✅ Check Service Health
+        run: |
+          curl --retry 5 --retry-delay 5 --fail http://localhost:8000/docs || exit 1
+
+      - name: 📤 Upload PDF Reports (Optional)
+        if: success()
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: audit-reports
+          path: backend/reports/output/
+
+  dockerhub-release:
+    name: 📦 Build & Push to Docker Hub
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
+      - name: 🧾 Checkout Code
+        uses: actions/checkout@v4.2.2
 
-    - name: Setup kubectl
-      uses: azure/setup-kubectl@v3
-      with:
-        version: 'v1.26.0'
+      - name: 🔑 Log in to Docker Hub
+        uses: docker/login-action@v3.4.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Configure Kubeconfig
-      run: |
-        echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
-        export KUBECONFIG=$PWD/kubeconfig
+      - name: 🏷️ Set Release Tag
+        id: tag
+        run: echo "RELEASE_TAG=rcai-$(date +'%Y%m%d-%H%M')" >> $GITHUB_ENV
 
-    - name: Deploy with Helm
-      run: |
-        helm upgrade --install sentinel ./helm --namespace redcorps \
-          --set image.tag=latest \
-          --set frontend.image.tag=latest
+      - name: 🐳 Build & Push Backend
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/sentinel-backend:${{ env.RELEASE_TAG }} -f docker/backend.Dockerfile ./backend
+          docker push ${{ secrets.DOCKER_USERNAME }}/sentinel-backend:${{ env.RELEASE_TAG }}
+
+      - name: 🐳 Build & Push Frontend
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/sentinel-frontend:${{ env.RELEASE_TAG }} -f docker/frontend.Dockerfile ./frontend
+          docker push ${{ secrets.DOCKER_USERNAME }}/sentinel-frontend:${{ env.RELEASE_TAG }}
+
+  cleanup:
+    name: 🧹 Cleanup Dangling Docker Artifacts
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: 🧼 Prune Old Containers
+        run: |
+          docker container prune -f
+          docker image prune -af
