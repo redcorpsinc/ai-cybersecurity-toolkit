@@ -32,10 +32,10 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
 
-      - name: 📦 Install Frontend Dependencies
+      - name: 📦 Install Frontend Dependencies (Temp Patch)
         run: |
           cd frontend
-          npm ci
+          npm install --legacy-peer-deps
 
       - name: 🧪 Run Backend Tests
         run: |
