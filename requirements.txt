@@ -26,6 +26,7 @@ python-dotenv==1.0.1
 httpx==0.25.0
 pydantic==1.10.9
 typing-extensions==4.8.0
+cryptography==45.0.0
 
 # 🗃️ MongoDB Driver (optional)
 pymongo==4.6.0
