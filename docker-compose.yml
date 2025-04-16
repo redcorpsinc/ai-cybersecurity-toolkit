@@ -3,8 +3,8 @@ version: '3.9'
 services:
   backend:
     build:
-      context: .
-      dockerfile: docker/backend.Dockerfile
+      context: ./backend
+      dockerfile: ../docker/backend.Dockerfile
     container_name: sentinel-backend
     ports:
       - "8000:8000"
@@ -18,8 +18,8 @@ services:
 
   frontend:
     build:
-      context: .
-      dockerfile: docker/frontend.Dockerfile
+      context: ./frontend
+      dockerfile: ../docker/frontend.Dockerfile
     container_name: sentinel-frontend
     ports:
       - "3000:3000"
