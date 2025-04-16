@@ -1,0 +1,37 @@
+replicaCount: 1
+
+image:
+  repository: redcorpsinc/secure-backend
+  tag: latest
+  pullPolicy: Always
+
+frontend:
+  image:
+    repository: redcorpsinc/secure-frontend
+    tag: latest
+    pullPolicy: Always
+
+mongodb:
+  enabled: true
+  image: mongo
+  port: 27017
+
+service:
+  type: ClusterIP
+  backendPort: 8000
+  frontendPort: 3000
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: secure.redcorps.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: secure-tls
+      hosts:
+        - secure.redcorpsinc.com

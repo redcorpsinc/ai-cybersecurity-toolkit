@@ -1,0 +1,6 @@
+apiVersion: v2
+name: ai-cybersecurity-toolkit
+description: A Helm chart for deploying RedCorps Sentinel - AI-powered cybersecurity audit engine
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
