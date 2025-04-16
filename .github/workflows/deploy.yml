@@ -14,15 +14,15 @@ jobs:
 
     steps:
       - name: 🧾 Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.2.2
 
       - name: 🐍 Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5.5.0
         with:
           python-version: '3.11'
 
       - name: 🟩 Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4.4.0
         with:
           node-version: '18'
 
@@ -61,7 +61,7 @@ jobs:
           python cli/cli.py --scan example.com
 
       - name: 📤 Upload Backend Test Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: backend-test-report
           path: backend-test-report.xml
@@ -73,7 +73,7 @@ jobs:
 
     steps:
       - name: 🧾 Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.2.2
 
       - name: 🐳 Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.10.0
