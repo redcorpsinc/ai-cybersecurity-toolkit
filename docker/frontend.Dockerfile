@@ -2,7 +2,7 @@
 # Build Context: ./frontend (optimized for build cache)
 
 # --- Build Stage ---
-FROM node:18-slim AS builder
+FROM node:23.11.0-slim AS builder
 
 WORKDIR /app
 
