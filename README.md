@@ -1,103 +1,107 @@
-# 🔐 RedCorps Sentinel
-
+# 🔐 RedCorps Sentinel  
 **AI-Powered Offline Cybersecurity Toolkit**
 
-Turn your laptop into a full-stack vulnerability scanner, GPT-powered risk assessor, and compliance report engine — all offline, self-hosted, and monetized with license control.
+Turn your laptop into a full-stack vulnerability scanner, GPT-powered risk assessor, and compliance reporting engine — all offline, self-hosted, and monetized with license control.
 
 ---
 
 ## 🚀 Features
 
-- ✅ **FastAPI-based API engine**
-- ✅ **Next.js dashboard UI (Dockerized)**
-- ✅ **OpenAI GPT risk analysis (NIST, CIS, PCI, ISO)**
-- ✅ **Recon: Nmap + DNS + Tech stack fingerprints**
-- ✅ **AI-powered PDF report generator**
-- ✅ **Offline CLI tool with license key activation**
-- ✅ **Self-hosted MongoDB (optional log store)**
-- ✅ **License system: RSA-signed, CLI-validatable**
+- ✅ FastAPI-based backend API engine  
+- ✅ Next.js frontend dashboard (Dockerized)  
+- ✅ GPT-driven risk analysis (Supports NIST, CIS, PCI, ISO)  
+- ✅ Recon engine: Nmap + DNS scan + Tech stack fingerprinting  
+- ✅ AI-powered PDF + HTML report generator  
+- ✅ Fully offline CLI tool with license key validation  
+- ✅ Self-hosted MongoDB support for report storage  
+- ✅ RSA-based license activation and verification system  
 
 ---
 
 ## 📦 Installation (Docker Compose)
 
-### 1. Clone This Repo
 ```bash
+# 1. Clone the repository
 git clone https://github.com/your-org/ai-cybersecurity-toolkit.git
 cd ai-cybersecurity-toolkit
-```
 
-### 2. Set Up Environment
-```bash
+# 2. Create and configure environment file
 cp .env.template .env
-# Edit .env with your own OPENAI_API_KEY and JWT_SECRET
-```
+# Edit .env to add your OPENAI_API_KEY and JWT_SECRET
 
-### 3. Build and Launch
-```bash
+# 3. Build and launch containers
 docker-compose build
 docker-compose up -d
 ```
 
-### 4. Access the Toolkit
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000/docs
+### 🔗 Access the Toolkit
+- **Frontend UI:** `http://localhost:3000`  
+- **Backend API Docs:** `http://localhost:8000/docs`  
 
 ---
 
 ## 🧠 Usage (Web Interface)
 
-1. Visit `/scan` in your browser
-2. Enter domain or IP
-3. Choose compliance framework (NIST, PCI, CIS, ISO)
-4. Get AI-driven risk score, PDF report, and mapped controls
-5. View or download past reports via `/reports`
+1. Go to `/scan` on the dashboard  
+2. Enter a domain or IP address  
+3. Select compliance framework (NIST, PCI, CIS, ISO)  
+4. View:
+   - GPT-generated risk score  
+   - AI summary report (PDF/HTML)  
+   - Mapped security controls  
+5. Check `/reports` to view/download archived results  
 
 ---
 
 ## 💻 Usage (Offline CLI)
 
-### 1. Activate License
 ```bash
+# 1. Generate & install a license key
 python scripts/license_generator.py --create acme-123 > key.lic
 cp key.lic ~/.ai-sec-cli/license.lic
-```
 
-### 2. Run Scan from CLI
-```bash
+# 2. Run an offline scan
 python cli/cli.py --scan example.com
 ```
 
-> ✅ CLI works fully offline — AI prompts, scan logic, and PDF all local.
+✅ CLI runs **fully offline** – includes local GPT prompts, scan engine, and report generation.
 
 ---
 
 ## 🔑 Licensing System
 
-- Licenses are RSA signed via `scripts/license_generator.py`
-- CLI and API verify offline
-- You can embed this into Gumroad, SaaS subscriptions, or reseller tiers
+- Licenses are RSA-signed using `scripts/license_generator.py`  
+- CLI and backend validate keys offline  
+- Ready for monetization via:
+  - SaaS subscriptions  
+  - Gumroad/gated downloads  
+  - Reseller partner tiers  
 
 ---
 
 ## 🧾 Report Output
 
-- Stored at: `backend/reports/output/`
-- Formats: PDF + HTML
-- Includes: Target, GPT risk score, mapped controls, compliance footer
+- **Storage:** `backend/reports/output/`  
+- **Formats:** PDF & HTML  
+- **Details Included:**
+  - Target Info
+  - GPT Risk Score
+  - Framework-mapped security controls
+  - Compliance footer
 
 ---
 
 ## 📁 Folder Structure
+
 ```
 ai-cybersecurity-toolkit/
-├── backend/ (FastAPI + AI Engine)
-├── frontend/ (Next.js UI)
-├── cli/ (Offline client)
-├── reports/ (PDF Templates)
-├── docker/ (Dockerfiles)
-├── scripts/ (License generator)
-├── .env.template
+├── backend/        # FastAPI + GPT analysis engine
+├── frontend/       # Next.js dashboard UI
+├── cli/            # Offline CLI client
+├── reports/        # PDF & HTML templates
+├── docker/         # Dockerfiles for services
+├── scripts/        # License generation tools
+├── .env.template   # Environment variables template
 ├── docker-compose.yml
 ```
 
@@ -105,24 +109,25 @@ ai-cybersecurity-toolkit/
 
 ## 💸 Use Cases
 
-- ✅ Law firms without IT staff
-- ✅ Freelancers offering security audits
-- ✅ Startups needing baseline NIST/CIS compliance
-- ✅ IT pros who want local-first security tooling
+- ✅ Law firms without in-house IT  
+- ✅ Freelancers delivering cybersecurity audits  
+- ✅ Startups needing lightweight NIST/CIS compliance  
+- ✅ IT professionals preferring **local-first** tooling  
 
 ---
 
 ## 📃 License
 
-MIT (for internal use). Contact [you@yourdomain.com] for commercial licensing.
+**MIT License** (for internal use)  
+🔒 For **commercial use**, contact: [you@yourdomain.com](mailto:you@yourdomain.com)
 
 ---
 
 ## 🤝 Support / Contribute
 
-PRs welcome. For commercial inquiries, demos, or deployment:
-📧 you@yourdomain.com
+We welcome your pull requests, ideas, and contributions.  
+📧 **Business, demo, or deployment inquiries:** [you@yourdomain.com](mailto:you@yourdomain.com)
 
 ---
 
-Built with ❤️ by RedCorps Inc.
+Built with ❤️ by **RedCorps Inc.**
