@@ -1,0 +1,157 @@
+name: 🚀 Deploy Red Corps AI Sentinel
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: ✅ Run All Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧾 Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 🟩 Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: 📦 Install Backend Dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: 📦 Install Frontend Dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: 🧪 Run Backend Tests
+        run: |
+          cd backend
+          pytest tests/ --junitxml=../backend-test-report.xml
+
+      - name: 🧪 Lint Python (Backend, CLI, Scripts)
+        run: |
+          pip install flake8
+          flake8 backend cli scripts
+
+      - name: 🧪 Lint JavaScript (Frontend)
+        run: |
+          cd frontend
+          npm run lint
+
+      - name: 🧪 Run CLI Test + License Validation
+        run: |
+          pip install fpdf click
+          python scripts/license_generator.py --create acme-123 > key.lic
+          mkdir -p ~/.ai-sec-cli
+          cp key.lic ~/.ai-sec-cli/license.lic
+          python cli/cli.py --scan example.com
+
+      - name: 📤 Upload Backend Test Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-test-report
+          path: backend-test-report.xml
+
+  build-and-deploy:
+    name: 🔧 Build & Deploy (Docker Compose)
+    needs: tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧾 Checkout Code
+        uses: actions/checkout@v3
+
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.10.0
+
+      - name: 📦 Set up Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.21.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+
+      - name: 🗂️ Load Environment Variables
+        run: cp .env.template .env
+
+      - name: 🔧 Build Containers
+        run: docker-compose build
+
+      - name: 🚀 Run Containers
+        run: docker-compose up -d
+
+      - name: ⏳ Wait for Backend to Start (Retry + Logs)
+        run: |
+          for i in {1..10}; do
+            if curl -s http://localhost:8000/docs > /dev/null; then
+              echo "✅ Backend is up"
+              exit 0
+            else
+              echo "⏳ Waiting for backend... ($i)"
+              sleep 5
+            fi
+          done
+          echo "❌ Backend did not respond at /docs"
+          echo "🔍 Showing Docker logs:"
+          docker ps -a
+          docker logs $(docker ps -aqf "name=sentinel-backend") || true
+          exit 1
+
+      - name: 📤 Upload PDF Reports (Optional)
+        if: success()
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: audit-reports
+          path: backend/reports/output/
+
+  dockerhub-release:
+    name: 📦 Build & Push to Docker Hub
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 🧾 Checkout Code
+        uses: actions/checkout@v4.2.2
+
+      - name: 🔑 Log in to Docker Hub
+        uses: docker/login-action@v3.4.0
+        with:
+          username: "ssufiyan71"
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: 🏷️ Set Release Tag
+        id: tag
+        run: echo "RELEASE_TAG=rcai-$(date +'%Y%m%d-%H%M')" >> $GITHUB_ENV
+
+      - name: 🐳 Build & Push Backend
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/sentinel-backend:${{ env.RELEASE_TAG }} -f docker/backend.Dockerfile ./backend
+          docker push ${{ secrets.DOCKER_USERNAME }}/sentinel-backend:${{ env.RELEASE_TAG }}
+
+      - name: 🐳 Build & Push Frontend
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/sentinel-frontend:${{ env.RELEASE_TAG }} -f docker/frontend.Dockerfile ./frontend
+          docker push ${{ secrets.DOCKER_USERNAME }}/sentinel-frontend:${{ env.RELEASE_TAG }}
+
+  cleanup:
+    name: 🧹 Cleanup Dangling Docker Artifacts
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: 🧼 Prune Old Containers
+        run: |
+          docker container prune -f
+          docker image prune -af
