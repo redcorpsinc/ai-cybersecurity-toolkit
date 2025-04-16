@@ -1,0 +1,27 @@
+# Node modules
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Local env & logs
+.env
+.env.local
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Build artifacts
+.next
+out
+coverage
+
+# IDE configs
+.vscode
+.idea
+*.swp
