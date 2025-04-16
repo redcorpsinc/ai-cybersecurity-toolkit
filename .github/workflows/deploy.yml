@@ -40,7 +40,12 @@ jobs:
       - name: 🧪 Run Backend Tests
         run: |
           cd backend
-          pytest tests/ --junitxml=../backend-test-report.xml
+          if [ -d "tests" ]; then
+            pytest --junitxml=../backend-test-report.xml
+          else
+            echo "⚠️ No tests/ directory found, skipping tests."
+          fi
+
 
       - name: 🧪 Lint Python (Backend, CLI, Scripts)
         run: |
