@@ -34,8 +34,8 @@ services:
     container_name: sentinel-mongo
     ports:
       - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
+    #volumes:
+     # - mongo-data:/data/db
     volumes:
       - ./docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
 
