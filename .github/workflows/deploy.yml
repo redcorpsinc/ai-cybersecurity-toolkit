@@ -33,9 +33,22 @@ jobs:
       - name: 🚀 Run Containers
         run: docker-compose up -d
 
-      - name: ✅ Check Service Health
+      - name: ⏳ Wait for Backend to Start (Retry + Logs)
         run: |
-          curl --retry 5 --retry-delay 5 --fail http://localhost:8000/docs || exit 1
+          for i in {1..10}; do
+            if curl -s http://localhost:8000/docs > /dev/null; then
+              echo "✅ Backend is up"
+              exit 0
+            else
+              echo "⏳ Waiting for backend... ($i)"
+              sleep 5
+            fi
+          done
+          echo "❌ Backend did not respond at /docs"
+          echo "🔍 Showing Docker logs:"
+          docker ps -a
+          docker logs $(docker ps -aqf "name=sentinel-backend") || true
+          exit 1
 
       - name: 📤 Upload PDF Reports (Optional)
         if: success()
