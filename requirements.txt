@@ -1,0 +1,34 @@
+# ⚙️ Base Installer
+pip==25.0.1
+
+# 🚀 FastAPI + ASGI
+fastapi==0.104.1
+uvicorn==0.23.2
+
+# 🧠 AI Integration
+openai==1.13.3
+
+# 🔍 Recon + Web Fingerprinting
+dnspython==2.4.2
+requests==2.31.0
+beautifulsoup4==4.12.2
+
+# 📄 Report Generation
+jinja2==3.1.2
+weasyprint==61.2
+
+# 🔐 Auth + Security
+python-jose==3.3.0
+passlib==1.7.4
+python-dotenv==1.0.1
+
+# 🧰 Dev Tools
+httpx==0.25.0
+pydantic==1.10.9
+typing-extensions==4.8.0
+
+# 🗃️ MongoDB Driver (optional)
+pymongo==4.6.0
+
+# 🖥️ CLI Interface
+rich==13.7.0
